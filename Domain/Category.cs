@@ -1,0 +1,16 @@
+﻿using Domain.Commun;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Domain
+{
+    public class Category: DomainBase
+    {
+      
+        public string CategoryName { get;  set; }
+
+    }
+}
