@@ -1,7 +1,8 @@
-using System;
-
+using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
+using Persistence.Repositories;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,12 @@ builder.Services.AddDbContext<AppDBContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Application.Categories.Commands.CreateCategoryCommand).Assembly));
+
 var app = builder.Build();
 
 // Apply migrations + seed data (dev-friendly defaults)

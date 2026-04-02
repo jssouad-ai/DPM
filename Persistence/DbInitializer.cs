@@ -89,7 +89,7 @@ namespace Persistence
             // These are non-nullable and mapped as NOT NULL in the DB
             entity.DeletedBy = string.Empty;
             entity.DeletedDate = DateTime.UnixEpoch;
-            entity.IsDeleted = 0;
+            entity.IsDeleted = false;
         }
 
 
