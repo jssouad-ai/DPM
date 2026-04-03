@@ -18,6 +18,7 @@ builder.Services.AddDbContext<AppDBContext>(opt =>
 });
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Application.Categories.Commands.CreateCategoryCommand).Assembly));

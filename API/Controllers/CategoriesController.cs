@@ -1,13 +1,11 @@
 ﻿using Application.Categories.Commands;
 using Application.Categories.Queries;
-using Application.Categories.Queries;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using static Application.Categories.Queries.GetCategoryDetails;
 
 namespace API.Controllers
 {

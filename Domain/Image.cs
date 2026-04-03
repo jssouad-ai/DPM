@@ -10,16 +10,17 @@ namespace Domain
     public class Image : DomainBase
     {
         public string ImgURL { get; set; }
-        public int ProjectId { get;  set; }
+        public string? ProjectId { get;  set; }
         public string ImgCaption { get; set; }
 
         private Image() { }
-        public Image(string url)
+        public Image(string imgURL, string imgCaption)
         {
-            if (string.IsNullOrWhiteSpace(url))
+            if (string.IsNullOrWhiteSpace(imgURL))
                 throw new ArgumentException("Url cannot be empty");
 
-            ImgURL = url;
+            ImgURL = imgURL;
+            ImgCaption= imgCaption;
         }
     }
 }

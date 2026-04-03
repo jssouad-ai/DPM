@@ -9,9 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Categories.Queries
 {
-    public class GetCategoryDetails
-    {
-        public record GetCategoryDetailQuery(string Id) : IRequest<Category?>;
+          public record GetCategoryDetailQuery(string Id) : IRequest<Category?>;
 
         public class GetCategoryDetailHandler
             : IRequestHandler<GetCategoryDetailQuery, Category?>
@@ -32,5 +30,5 @@ namespace Application.Categories.Queries
 
 
         }
-    }
+    
 }

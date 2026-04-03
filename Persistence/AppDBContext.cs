@@ -20,10 +20,27 @@ namespace Persistence
         public required DbSet<User> Users { get; set; }
         public required DbSet<Permission> Permissions { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Project>()
+                .HasMany(p => p.Images)
+                .WithOne() // pas de navigation inverse obligatoire
+                .OnDelete(DeleteBehavior.Cascade); // supprime les images si le projet est supprimé
+
+            modelBuilder.Entity<Project>()
+                 .HasOne<Category>()          
+                 .WithMany()                   
+                 .HasForeignKey(p => p.CategoryId);
+
+            modelBuilder.Entity<Image>()
+                 .HasIndex(i => i.ImgURL)
+                 .IsUnique();
+        }
+
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-           
+
             foreach (var entry in ChangeTracker.Entries<DomainBase>())
             {
                 if (entry.State == EntityState.Added)

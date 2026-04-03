@@ -35,7 +35,7 @@ namespace Persistence
             Stamp(category, seedUser, now, updateDate);
 
             var ImgURL = "./API/Images/ResidenceLesOliviers.jpeg";
-            var image = new Image(ImgURL)
+            var image = new Image(ImgURL,"caption")
             {
                 ImgCaption = "Image_Résidence Les Oliviers",
 
