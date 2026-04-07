@@ -133,7 +133,6 @@ C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.GeneratedMSBuildEditorCo
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.AssemblyInfoInputs.cache
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.AssemblyInfo.cs
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\rjimswa.dswa.cache.json
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
@@ -154,3 +153,6 @@ C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\API.sourcelink.json
 C:\Users\user\source\repos\DPM\API\bin\Debug\net8.0\MediatR.dll
 C:\Users\user\source\repos\DPM\API\bin\Debug\net8.0\MediatR.Contracts.dll
 C:\Users\user\source\repos\DPM\API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\user\source\repos\DPM\API\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\user\source\repos\DPM\API\bin\Debug\net8.0\FluentValidation.dll
+C:\Users\user\source\repos\DPM\API\bin\Debug\net8.0\FluentValidation.DependencyInjectionExtensions.dll

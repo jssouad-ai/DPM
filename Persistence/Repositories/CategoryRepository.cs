@@ -28,14 +28,22 @@ namespace Persistence.Repositories
         //  Get category by Id
         public async Task<Category?> GetByIdAsync(string id)
         {
-            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Categories.Where(c => !c.IsDeleted).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         // Add category
         public async Task AddAsync(Category category)
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                throw new Exception("Unable to create category: " + msg);
+            }
         }
 
         // Update category
@@ -48,9 +56,15 @@ namespace Persistence.Repositories
         // Delete category
         public async Task DeleteAsync(Category category)
         {
-            _context.Categories.Remove(category);
+            category.IsDeleted = true;
+           // _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
 
+        public async Task<bool> ExistsAsync(string name)
+        {
+            return await _context.Categories.AnyAsync(i => i.CategoryName == name);
+
+        }
     }
 }

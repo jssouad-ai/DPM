@@ -22,5 +22,7 @@ namespace Domain.Interfaces
 
         //Delete Category
         Task DeleteAsync(Category category);
+
+        Task<bool> ExistsAsync(string name);
     }
 }

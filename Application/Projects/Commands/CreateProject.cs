@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -9,36 +11,44 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Commands
 {
-    public record CreateProjectCommand(string Name, string Description, string CategoryId, IEnumerable<string > ImageUrls) : IRequest<Unit>;
+    public record CreateProjectCommand(string Name, string Description, string CategoryId, IEnumerable<string > ImageIds) : IRequest<ProjectDTO>;
 
-    public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, Unit>
+    public class CreateProjectHandler : IRequestHandler<CreateProjectCommand, ProjectDTO>
     {
         private readonly IRepository<Project> _repo;
+        private readonly IRepository<Image> _imageRepo;
+        private readonly IMapper _mapper;
 
-        public CreateProjectHandler(IRepository<Project> repo)
+        public CreateProjectHandler(IRepository<Project> repo, IRepository<Image> imageRepo, IMapper mapper)
         {
             _repo = repo;
+            _imageRepo = imageRepo;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<ProjectDTO> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
         {
-            var Project = new Project
-            {
-                ProjectName = request.Name,
-                ProjectDescription= request.Description, 
-                CategoryId= request.CategoryId,
-               
-            };
-            // Project.AddImage("./API/Images/ResidenceLesOliviers.jpeg");
-            foreach (var url in request.ImageUrls)
-            {
-                Project.AddImage(url, "ImageCaption");
-            }
-                
+            // if (string.IsNullOrWhiteSpace(request.Name)) throw new ArgumentException("ProjectName cannot be empty");
 
-            await _repo.AddAsync(Project);
+            var project = _mapper.Map<Project>(request);
 
-            return Unit.Value;
+            var images = await _imageRepo.GetByIdsAsync(request.ImageIds);
+            project.AddImages(images);
+
+
+            var exists = await _repo.ExistsByNameAsync(request.Name);
+
+            if (exists) throw new Exception("An Project with this Name already exists");
+
+            await _repo.AddAsync(project);
+
+            return _mapper.Map<ProjectDTO>(project);
+
+
+
+
+
+
         }
     }
 }

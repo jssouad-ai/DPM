@@ -1,8 +1,10 @@
 ﻿using Application.Categories.Commands;
 using Application.Categories.Queries;
+using Application.DTOs;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -39,33 +41,25 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateCategoryCommand command)
+        public async Task<IActionResult> Create(CreateCategoryCommand command)
         {
             await _mediator.Send(command);
-            return Ok(new
-            {
-                Message = "Category created successfully"
-            });
+           // return Ok(new{  Message = "Category created successfully"});
+            return Ok(new { success = true, Message = "Category created successfully" });
         }
 
         [HttpPut]
         public async Task<IActionResult> Update(UpdateCategoryCommand command)
         {
             await _mediator.Send(command);
-            return Ok(new
-            {
-                Message = "Category updated successfully"
-            });
+            return Ok(new { success = true, Message = "Category updated successfully"  });
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             await _mediator.Send(new DeleteCategoryCommand(id));
-            return Ok(new
-            {
-                Message = "Category Deleted successfully"
-            });
+            return Ok(new { success= true , Message = "Category Deleted successfully"   });
         }
 
     }

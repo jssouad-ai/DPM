@@ -1,4 +1,6 @@
-﻿using Application.Images.Commands;
+﻿using Application.DTOs;
+using Application.Images.Commands;
+using Application.Images.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +19,14 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-       /* [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var result = await _mediator.Send(new GetImageListQuery());
             return Ok(result);
         }
 
-        [HttpGet("{id}")]
+       [HttpGet("{id}")]
         public async Task<IActionResult> GetDetail(string id)
         {
             var result = await _mediator.Send(new GetImageDetailQuery(id));
@@ -33,10 +35,10 @@ namespace API.Controllers
                 return NotFound();
 
             return Ok(result);
-        }*/
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateImageCommand command)
+        public async Task<IActionResult> Create(CreateImageCommand command)
         {
             await _mediator.Send(command);
             return Ok(new

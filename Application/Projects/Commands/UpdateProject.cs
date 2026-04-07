@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -10,38 +12,41 @@ using System.Threading.Tasks;
 namespace Application.Projects.Commands
 {
 
-    public record UpdateProjectCommand(string Id, string Name, string Description, string CategoryId, List<Image> Images) : IRequest<Unit>;
+    public record UpdateProjectCommand(string Id, string Name, string Description, string CategoryId, IEnumerable<string> ImageIds) : IRequest<ProjectDTO>;
 
-    public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, Unit>
+    public class UpdateProjectHandler : IRequestHandler<UpdateProjectCommand, ProjectDTO>
     {
         private readonly IRepository<Project> _repo;
+        private readonly IRepository<Image> _imageRepo;
+        private readonly IMapper _mapper;
 
-        public UpdateProjectHandler(IRepository<Project> repo)
+        public UpdateProjectHandler(IRepository<Project> repo,IRepository<Image> imageRepo, IMapper mapper)
         {
             _repo = repo;
+            _imageRepo = imageRepo;
+            _mapper = mapper;
+
         }
 
-        public async Task<Unit> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+        public async Task<ProjectDTO> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
         {
-            var Project = await _repo.GetByIdAsync(request.Id);
+            var project = await _repo.GetByIdAsync(request.Id);
 
-            if (Project == null)
+            if (project == null)
                 throw new Exception("Project not found");
 
-            Project.ProjectName = request.Name;
+            /*Project.ProjectName = request.Name;
             Project.ProjectDescription = request.Description;
-            Project.CategoryId = request.CategoryId;
-            foreach (var img in request.Images)
-            {
-                if (!Project.Images.Any(i => i.Id == img.Id))
-                {
-                    Project.AddImage(img.ImgURL, img.ImgCaption);
-                    //Project.AddImage(img);
-                }
-            }
-                await _repo.UpdateAsync(Project);
+            Project.CategoryId = request.CategoryId;*/
 
-            return Unit.Value;
+           _mapper.Map(request, project); 
+
+            var images = await _imageRepo.GetByIdsAsync(request.ImageIds);
+            project.AddImages(images);              
+              
+            await _repo.UpdateAsync(project);
+
+            return _mapper.Map<ProjectDTO>(project);
 
 
         }

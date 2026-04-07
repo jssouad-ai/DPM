@@ -16,6 +16,8 @@ namespace Domain.Interfaces
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<bool> ExistsByUrlAsync(string url);
+        Task<bool> ExistsByNameAsync(string name);
+        Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<string> ids);
 
     }
 }

@@ -43,7 +43,29 @@ namespace Persistence
 
             foreach (var entry in ChangeTracker.Entries<DomainBase>())
             {
-                if (entry.State == EntityState.Added)
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.CreatedDate = DateTime.UtcNow;
+                        entry.Entity.CreatedBy = "system";
+                        entry.Entity.IsDeleted = false;
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.UpdatedDate = DateTime.UtcNow;
+                        entry.Entity.UpdatedBy = "system";
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.Entity.IsDeleted = true;
+                        entry.Entity.DeletedDate = DateTime.UtcNow;
+                        break;
+                }
+
+
+
+              /*  if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedBy = "system";
                     entry.Entity.CreatedDate = DateTime.UtcNow;
@@ -61,7 +83,7 @@ namespace Persistence
                     entry.Entity.IsDeleted = true;
                     entry.Entity.DeletedBy = "system";
                     entry.Entity.DeletedDate = DateTime.UtcNow;
-                }
+                }*/
             }
 
             return await base.SaveChangesAsync(cancellationToken);

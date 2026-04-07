@@ -1,8 +1,12 @@
+using API.Middleware;
+using Application.Categories.Commands;
+using Application.Core;
 using Domain.Interfaces;
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using Persistence.Repositories;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +24,24 @@ builder.Services.AddDbContext<AppDBContext>(opt =>
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+// MediatR
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(Application.Categories.Commands.CreateCategoryCommand).Assembly));
 
+// Auto Mapper 
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+// FluentValidation
+builder.Services.AddValidatorsFromAssembly(typeof(CreateCategoryValidator).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+
+
 var app = builder.Build();
+
+// Middleware JSON propre
+app.UseMiddleware<ExceptionMiddleware>();
+
 
 // Apply migrations + seed data (dev-friendly defaults)
 if (app.Environment.IsDevelopment())

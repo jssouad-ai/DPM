@@ -1,4 +1,6 @@
-﻿using Domain.Interfaces;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain.Interfaces;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -8,18 +10,20 @@ using System.Threading.Tasks;
 
 namespace Application.Categories.Commands
 {
-    public record DeleteCategoryCommand(string Id) : IRequest<Unit>;
+    public record DeleteCategoryCommand(string Id) : IRequest<CategoryDTO>;
 
-    public class DeleteCategoryHandler : IRequestHandler<DeleteCategoryCommand, Unit>
+    public class DeleteCategoryHandler : IRequestHandler<DeleteCategoryCommand, CategoryDTO>
     {
         private readonly ICategoryRepository _repo;
+        private readonly IMapper _mapper;
 
-        public DeleteCategoryHandler(ICategoryRepository repo)
+        public DeleteCategoryHandler(ICategoryRepository repo , IMapper mapper )
         {
             _repo = repo;
+            _mapper = mapper;   
         }
 
-        public async Task<Unit> Handle( DeleteCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<CategoryDTO> Handle( DeleteCategoryCommand request, CancellationToken cancellationToken)
         {
             var category = await _repo.GetByIdAsync(request.Id);
 
@@ -28,7 +32,7 @@ namespace Application.Categories.Commands
 
             await _repo.DeleteAsync(category);
 
-            return Unit.Value;
+            return _mapper.Map<CategoryDTO>(category);
         }
     }
 }

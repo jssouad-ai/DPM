@@ -16,8 +16,8 @@ namespace Domain
         private Image() { }
         public Image(string imgURL, string imgCaption)
         {
-            if (string.IsNullOrWhiteSpace(imgURL))
-                throw new ArgumentException("Url cannot be empty");
+            /**if (string.IsNullOrWhiteSpace(imgURL))
+                throw new ArgumentException("Url cannot be empty");*/
 
             ImgURL = imgURL;
             ImgCaption= imgCaption;

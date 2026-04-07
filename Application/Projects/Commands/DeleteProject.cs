@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -9,29 +11,31 @@ using System.Threading.Tasks;
 
 namespace Application.Projects.Commands
 {
-   
-        public record DeleteProjectCommand(string Id) : IRequest<Unit>;
 
-        public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, Unit>
+    public record DeleteProjectCommand(string Id) : IRequest<ProjectDTO>;
+
+    public class DeleteProjectHandler : IRequestHandler<DeleteProjectCommand, ProjectDTO>
+    {
+        private readonly IRepository<Project> _repo;
+        private readonly IMapper _mapper;
+
+        public DeleteProjectHandler(IRepository<Project> repo, IMapper mapper)
         {
-            private readonly IRepository<Project> _repo;
-
-            public DeleteProjectHandler(IRepository< Project> repo)
-            {
-                _repo = repo;
-            }
-
-            public async Task<Unit> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
-            {
-                var Project = await _repo.GetByIdAsync(request.Id);
-
-                if (Project == null)
-                    throw new Exception("Project not found");
-
-                await _repo.DeleteAsync(Project);
-
-                return Unit.Value;
-            }
+            _repo = repo;
+            _mapper = mapper;
         }
-    
+
+        public async Task<ProjectDTO> Handle(DeleteProjectCommand request, CancellationToken cancellationToken)
+        {
+            var project = await _repo.GetByIdAsync(request.Id);
+
+            if (project == null)
+                throw new Exception("Project not found");
+
+            await _repo.DeleteAsync(project);
+
+            return _mapper.Map<ProjectDTO>(project);
+        }
+    }
+
 }

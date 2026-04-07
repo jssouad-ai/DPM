@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -9,29 +11,35 @@ using System.Threading.Tasks;
 
 namespace Application.Images.Commands
 {
-    public record CreateImageCommand(string Url, string Caption) : IRequest<Unit>;
+    public record CreateImageCommand(string Url, string Caption) : IRequest<ImageDTO?>;
 
-    public class CreateImageHandler : IRequestHandler<CreateImageCommand, Unit>
+    public class CreateImageHandler : IRequestHandler<CreateImageCommand, ImageDTO?>
     {
         private readonly IRepository<Image> _repo;
-
-       public CreateImageHandler(IRepository<Image> repo)
+        private readonly IMapper _mapper;
+        public CreateImageHandler(IRepository<Image> repo , IMapper mapper)
         {
             _repo = repo;
+            _mapper = mapper;
+           
         }
 
-        public async Task<Unit> Handle(CreateImageCommand request, CancellationToken cancellationToken)
+        public async Task<ImageDTO?> Handle(CreateImageCommand request, CancellationToken cancellationToken)
         {
+
+           /* if (string.IsNullOrWhiteSpace(request.Url)) throw new ArgumentException("Url cannot be empty");
+
+            if (string.IsNullOrWhiteSpace(request.Caption)) throw new ArgumentException("Caption cannot be empty");*/
+
+            var image = _mapper.Map<Image>(request);
+          
             var exists = await _repo.ExistsByUrlAsync(request.Url);
 
-            if (exists)
-                throw new Exception("An image with this URL already exists");
+            if (exists) throw new Exception("An image with this URL already exists");
 
-            var Image = new Image(request.Url, request.Caption);
+           await _repo.AddAsync(image);
 
-            await _repo.AddAsync(Image);
-
-            return Unit.Value;
+            return _mapper.Map<ImageDTO>(image);
         }
     }
 }

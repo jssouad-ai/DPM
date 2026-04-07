@@ -1,4 +1,5 @@
-﻿using Application.Projects.Commands;
+﻿using Application.DTOs;
+using Application.Projects.Commands;
 using Application.Projects.Queries;
 using Domain;
 using MediatR;
@@ -39,7 +40,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateProjectCommand command)
+        public async Task<IActionResult> Create(CreateProjectCommand command)
         {
             await _mediator.Send(command);
             return Ok(new

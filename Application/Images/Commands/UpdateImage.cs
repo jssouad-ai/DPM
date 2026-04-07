@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -10,29 +12,31 @@ using System.Threading.Tasks;
 namespace Application.Images.Commands
 {
 
-    public record UpdateImageCommand(string Id, string caption) : IRequest<Unit>;
+    public record UpdateImageCommand(string Id, string caption) : IRequest<ImageDTO>;
 
-    public class UpdateImageHandler : IRequestHandler<UpdateImageCommand, Unit>
+    public class UpdateImageHandler : IRequestHandler<UpdateImageCommand, ImageDTO>
     {
         private readonly IRepository<Image> _repo;
+        private readonly IMapper  _mapper;
 
-        public UpdateImageHandler(IRepository<Image> repo)
+        public UpdateImageHandler(IRepository<Image> repo, IMapper mapper)
         {
             _repo = repo;
+            _mapper = mapper;
         }
 
-        public async Task<Unit> Handle(UpdateImageCommand request, CancellationToken cancellationToken)
+        public async Task<ImageDTO> Handle(UpdateImageCommand request, CancellationToken cancellationToken)
         {
-            var Image = await _repo.GetByIdAsync(request.Id);
+            var image = await _repo.GetByIdAsync(request.Id);
 
-            if (Image == null)
-                throw new Exception("Image not found");
+            if (image == null) throw new Exception("Image not found");
+           // if (string.IsNullOrWhiteSpace(request.caption)) throw new ArgumentException("Caption cannot be empty");
 
-            Image.ImgCaption = request.caption;
+            _mapper.Map(request, image);
 
-            await _repo.UpdateAsync(Image);
+            await _repo.UpdateAsync(image);
 
-            return Unit.Value;
+            return  _mapper.Map<ImageDTO>(image);
         }
     }
 }

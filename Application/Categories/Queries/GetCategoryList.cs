@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -21,23 +23,25 @@ namespace Application.Categories.Queries
              }
          }
      }*/
-    public record GetCategoryListQuery() : IRequest<List<Category>>;
+    public record GetCategoryListQuery() : IRequest<List<CategoryDTO>>;
 
-    public class GetCategoryListHandler
-        : IRequestHandler<GetCategoryListQuery, List<Category>>
+    public class GetCategoryListHandler : IRequestHandler<GetCategoryListQuery, List<CategoryDTO>>
     {
         private readonly ICategoryRepository _repo;
+        private readonly IMapper _mapper;
 
-        public GetCategoryListHandler(ICategoryRepository repo)
+        public GetCategoryListHandler(ICategoryRepository repo, IMapper mapper)
         {
             _repo = repo;
+            _mapper = mapper;
         }
 
-        public async Task<List<Category>> Handle(
-            GetCategoryListQuery request,
-            CancellationToken cancellationToken)
+        public async Task<List<CategoryDTO>> Handle(GetCategoryListQuery request, CancellationToken cancellationToken)
         {
-            return await _repo.GetAllAsync();
+            var categories = await _repo.GetAllAsync();
+           return _mapper.Map<List<CategoryDTO>>(categories);
+          
+
         }
     }
 }

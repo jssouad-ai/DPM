@@ -17,21 +17,43 @@ namespace Domain
         private readonly List<Image> _Projectimages = new();
         public IReadOnlyCollection<Image> Images => _Projectimages;
 
-        public void AddImage(string url , string caption)
-        {
-            _Projectimages.Add(new Image(url, caption));
-        }
-        public void AddImage(Image img)
-        {
-            _Projectimages.Add(img);
-        }
-        /* public void AddImages(IEnumerable<string> urls,IEnumerable< string> caption)
+        /* public void AddImage(string url , string caption)
          {
-             foreach (var url in urls)
-             {
-                 _Projectimages.Add(new Image(url, caption ));
-             }
+             _Projectimages.Add(new Image(url, caption));
+         }
+         public void AddImage(Image img)
+         {
+             _Projectimages.Add(img);
          }*/
+
+        public void AddImage(Image image)
+        {
+            if (image == null) return;
+
+            if (_Projectimages.Any(i => i.Id == image.Id))
+                return;
+
+            _Projectimages.Add(image);
+        }
+
+        public void AddImages(IEnumerable<Image > images)
+        {
+            foreach (var image in images)
+            {
+                AddImage(image);
+            }
+        }
+
+        /* au lieu de .Any
+         var existingUrls = _Projectimages.Select(i => i.ImgURL).ToHashSet();
+          foreach (var img in images)
+{
+    if (existingUrls.Add(img.ImgURL)) // retourne true si URL nouvelle
+    {
+        _Projectimages.Add(img);
+    }
+}
+          */
 
         /*   public void RemoveImage(Image img)
            {

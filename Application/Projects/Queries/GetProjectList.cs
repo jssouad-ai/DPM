@@ -1,4 +1,6 @@
-﻿using Domain;
+﻿using Application.DTOs;
+using AutoMapper;
+using Domain;
 using Domain.Interfaces;
 using MediatR;
 using System;
@@ -10,20 +12,23 @@ using System.Threading.Tasks;
 namespace Application.Projects.Queries
 {
    
-        public record GetProjectListQuery() : IRequest<List<Project>>;
+        public record GetProjectListQuery() : IRequest<List<ProjectDTO>>;
 
-        public class GetProjectListHandler : IRequestHandler<GetProjectListQuery, List<Project>>
+        public class GetProjectListHandler : IRequestHandler<GetProjectListQuery, List<ProjectDTO>>
         {
             private readonly IRepository<Project> _repo;
+            private readonly IMapper _mapper;
 
-            public GetProjectListHandler(IRepository<Project> repo)
+            public GetProjectListHandler(IRepository<Project> repo,IMapper mapper)
             {
                 _repo = repo;
+            _mapper = mapper;
             }
 
-            public async Task<List<Project>> Handle(GetProjectListQuery request, CancellationToken cancellationToken)
+            public async Task<List<ProjectDTO>> Handle(GetProjectListQuery request, CancellationToken cancellationToken)
             {
-                return await _repo.GetAllAsync();
+                var projects=  await _repo.GetAllAsync();
+                return _mapper.Map<List<ProjectDTO>>(projects);
             }
         }
     

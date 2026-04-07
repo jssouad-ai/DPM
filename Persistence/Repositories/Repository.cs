@@ -27,13 +27,21 @@ namespace Persistence.Repositories
 
         public async Task<T?> GetByIdAsync(string id)
         {
-            return await _dbSet.FirstOrDefaultAsync(e => e.Id == id);
+            return await _dbSet.Where(c => !c.IsDeleted).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task AddAsync(T entity)
         {
-            _dbSet.Add(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _dbSet.Add(entity);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                var msg = ex.InnerException?.Message ?? ex.Message;
+                throw new Exception($"Unable to create {entity} : " + msg);
+            }
         }
 
         public async Task UpdateAsync(T entity)
@@ -44,13 +52,22 @@ namespace Persistence.Repositories
 
         public async Task DeleteAsync(T entity)
         {
-            _dbSet.Remove(entity);
+             entity.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
 
         public async Task<bool> ExistsByUrlAsync(string url)
         {
             return await _context.Images.AnyAsync(i => i.ImgURL == url);
+        }
+        public async Task<bool> ExistsByNameAsync(string name)
+        {
+            return await _context.Projects.AnyAsync(i => i.ProjectName == name);
+        }
+
+        public async Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<string> ids)
+        {
+            return await _dbSet.Where(e => ids.Contains(e.Id)).ToListAsync();
         }
     }
 }
